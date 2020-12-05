@@ -1,0 +1,6 @@
+node_modules
+site/page-script.js
+site/page-script.js.map
+webext/content-script.js
+webext/content-script.js.LICENSE.txt
+webext/content-script.js.map

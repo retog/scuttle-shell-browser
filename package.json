@@ -1,0 +1,33 @@
+{
+  "name": "page-extension-rpc",
+  "version": "1.0.0",
+  "description": "## What it does",
+  "main": "webext/content-script.js",
+  "scripts": {
+    "build": "rollup -c",
+    "start:ext": "web-ext run --no-reload --source-dir ./webext/",
+    "serve": "http-server site -p 9090"
+  },
+  "webExt": {
+    "sourceDir": "webext/"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "buffer": "^6.0.3",
+    "muxrpc": "^6.5.1",
+    "pull-stream": "^3.6.14"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^17.0.0",
+    "@rollup/plugin-node-resolve": "^11.0.0",
+    "http-server": "^0.12.3",
+    "rollup": "^2.34.1",
+    "rollup-plugin-css-only": "^3.0.0",
+    "rollup-plugin-livereload": "^2.0.0",
+    "rollup-plugin-node-builtins": "^2.1.2",
+    "rollup-plugin-node-globals": "^1.4.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "web-ext": "^5.4.0"
+  }
+}
