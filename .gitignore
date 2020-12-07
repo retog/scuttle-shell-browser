@@ -4,3 +4,5 @@ site/page-script.js.map
 webext/content-script.js
 webext/content-script.js.LICENSE.txt
 webext/content-script.js.map
+webext/background.js
+webext/background.js.map

@@ -4,10 +4,43 @@ import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals'
+import json from '@rollup/plugin-json'
 
 const production = !process.env.ROLLUP_WATCH;
 
 export default [{
+	input: 'src/background-script.js',
+	output: {
+		sourcemap: true,
+		format: 'iife',
+		name: 'app',
+		file: 'webext/background-script.js',
+		intro: 'const global = window;',
+    globals: {
+      'ssb-client': 'ssb'
+    }
+	},
+	plugins: [
+    commonjs(),
+    globals(),
+		builtins(),
+		resolve({
+			browser: true,
+			dedupe: []
+    }),
+    json(),
+		
+
+		// If we're building for production (npm run build
+		// instead of npm run dev), minify
+		// production && terser()
+  ],
+  external: [ 'ssb-client' ],
+	watch: {
+		clearScreen: false
+	}
+},
+{
 	input: 'src/content-script.js',
 	output: {
 		sourcemap: true,

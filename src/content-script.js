@@ -1,4 +1,3 @@
-import MRPC from 'muxrpc'
 import { pull } from 'pull-stream'
 import { Buffer } from 'buffer'
 
@@ -46,50 +45,51 @@ const toPage = function sink(done) {
   }
 }
 
-/*
-Send a message to the page script.
-*/
-function messagePageScript() {
-  window.postMessage({
-    direction: "from-content-script",
-    message: "Message from the köntent skript"
-  }, window.location.origin);
+
+
+const myPort = browser.runtime.connect({name:"port-from-cs"});
+
+let bgMessageDataCallback = null
+let bgMessageDataBuffer = []
+
+myPort.onMessage.addListener(function(message) {
+  const asBuffer = Buffer.from(message)
+  if (bgMessageDataCallback) {
+    const _messageDataCallback = bgMessageDataCallback
+    bgMessageDataCallback = null
+    _messageDataCallback(null, asBuffer)
+  } else {
+    console.log('buffering....')
+    bgMessageDataBuffer.push(asBuffer)
+  }
+});
+
+const fromBackgroundScript = function read(abort, cb) {
+  if (bgMessageDataBuffer.length > 0) {
+    const data = bgMessageDataBuffer[0]
+    bgMessageDataBuffer = bgMessageDataBuffer.splice(1)
+    cb(null, data)
+  } else {
+    bgMessageDataCallback = cb
+  }
+
 }
 
-
-
-const manifest = {
-  //async is a normal async function
-  hello: 'async',
-
-  //source is a pull-stream (readable)
-  stuff: 'source'
-}
-
-const api = {
-  hello(name, cb) {
-    cb(null, 'hello, ' + name + '!')
-  },
-  stuff() {
-    return pull.values([1, 2, 3, 4, 5])
+const toBackgroundScript = function sink(done) {
+  return function (source) {
+    source(null, function more (end,data) {
+      if (end) return done()
+      myPort.postMessage(data);
+      source(null, more)
+    })
   }
 }
+/*function logger(text) {
+  return pull.map(v => {
+    console.log(text,v)
+    return v
+  })
+}*/
 
-const server = MRPC(null, manifest) (api)
-
-const onClose = () => {
-  console.log('muxrpc server closed')
-} 
-
-const serverStream = server.createStream(onClose)
-
-pull(
-  fromPage,
-  serverStream,
-  toPage()
-)
-
-client.hello('world').then((value) => {
-  console.log(value)
-})
-
+pull(fromPage, toBackgroundScript())
+pull(fromBackgroundScript, toPage())
