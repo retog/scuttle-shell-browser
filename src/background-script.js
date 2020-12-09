@@ -3,39 +3,39 @@ import { pull } from 'pull-stream'
 import { Buffer } from 'buffer'
 
 
-const manifest = {
-  //async is a normal async function
-  hello: 'async',
-
-  //source is a pull-stream (readable)
-  stuff: 'source'
-}
-
-const api = {
-  hello(name, cb) {
-    cb(null, 'hello, ' + name + '!')
-  },
-  stuff() {
-    return pull.values([1, 2, 3, 4, 5])
-  }
-}
 
 
-
-
-let connections = []
 let ports = []
 
 browser.runtime.onConnect.addListener(function connected(p) {
   ports[p.sender.tab.id] = p
-  connections.push(createConnection(p))
+  //p.sender.tab.onClose(() => console.log('tab closed, should close connection'))
+  const [fromContentScript, toContentScript] = createConnection(p)
+  const [fromNativeScript, toNativeScript] = createNativeConnection(p)
+
+  pull(
+    fromContentScript,
+    //logger('from content to native'),
+    toNativeScript
+  )
+  pull(
+    fromNativeScript,
+    //logger('from native to content'),
+    toContentScript
+  )
 })
+
+function createNativeConnection() {
+  const port = browser.runtime.connectNative("ssb4all")
+  return createConnection(port)
+}
+
 
 function createConnection(port) {
   let messageDataCallback = null
   let messageDataBuffer = []
-
-  const fromContentScript = function read(abort, cb) {
+ 
+  const fromPort = function read(abort, cb) {
     if (messageDataBuffer.length > 0) {
       const data = messageDataBuffer[0]
       messageDataBuffer = messageDataBuffer.splice(1)
@@ -57,7 +57,7 @@ function createConnection(port) {
     }
   });
 
-  const toContentScript = function(read) {
+  const toPort = function(read) {
     read(null, function more (end,data) {
       if (end) return
       port.postMessage(data);
@@ -65,20 +65,5 @@ function createConnection(port) {
     })
   }
 
-  const onClose = () => {
-    console.log('muxrpc server closed')
-  } 
-  
-  const server = MRPC(null, manifest) (api)
-  const serverStream = server.createStream(onClose)
-
-  pull(
-    fromContentScript,
-    serverStream,
-    toContentScript
-  )
-  
-  console.log('created server for', port)
-
-  return {fromContentScript, toContentScript}
+  return [fromPort, toPort]
 }

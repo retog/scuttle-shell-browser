@@ -14,7 +14,7 @@ export default [{
 		sourcemap: true,
 		format: 'iife',
 		name: 'app',
-		file: 'webext/background-script.js',
+		file: 'webext/background.js',
 		intro: 'const global = window;',
     globals: {
       'ssb-client': 'ssb'
