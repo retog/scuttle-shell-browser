@@ -76,7 +76,9 @@ const manifest = {
   hello: 'async',
 
   //source is a pull-stream (readable)
-  stuff: 'source'
+  stuff: 'source', 
+  
+  manifest: 'sync'
 }
 
 const api = {
@@ -85,6 +87,9 @@ const api = {
   },
   stuff() {
     return pull.values([1, 2, 3, 4, 5])
+  },
+  manifest: function () {
+    return manifest
   }
 }
 

@@ -47,16 +47,21 @@ const toWebExt = function sink(done) {
   }
 }
 
-const manifest = {
-  //async is a normal async function
-  hello: 'async',
 
-  //source is a pull-stream (readable)
-  stuff: 'source'
 
-}
+const client = MRPC(function (err, manifest) {
+  if (err) throw err
 
-const client = MRPC(manifest, null) ()
+  console.log(manifest) 
+
+  client.hello('world').then((value) => {
+    console.log(value)
+  })
+  pull(client.stuff(), pull.drain(console.log))
+
+  console.log('adding client to window')
+  window.client = client
+})()
 
 const onClose = () => {
   console.log('connected to muxrpc server')
@@ -69,11 +74,3 @@ pull(
   clientStream,
   toWebExt()
 )
-
-client.hello('world').then((value) => {
-  console.log(value)
-})
-pull(client.stuff(), pull.drain(console.log))
-
-console.log('adding client to window')
-window.client = client
