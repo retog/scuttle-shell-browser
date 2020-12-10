@@ -52,15 +52,11 @@ const toWebExt = function sink(done) {
 const client = MRPC(function (err, manifest) {
   if (err) throw err
 
-  console.log(manifest) 
-
-  client.hello('world').then((value) => {
-    console.log(value)
-  })
-  pull(client.stuff(), pull.drain(console.log))
+  //console.log(JSON.stringify(manifest,undefined, 2))
 
   console.log('adding client to window')
   window.client = client
+  window.pull = pull
 })()
 
 const onClose = () => {

@@ -4,8 +4,10 @@ import MRPC from 'muxrpc'
 import { pull } from 'pull-stream'
 import { Buffer } from 'buffer'
 import { inspect } from 'util'
+import Client from 'ssb-client'
 
 import {Input, Output} from 'web-ext-native-msg'
+
 
 const handleReject = e => {
   e = (new Output()).encode(e);
@@ -14,6 +16,10 @@ const handleReject = e => {
 };
 
 const writeStdout = async msg => {
+  //TODO check msg length < 1048576 bytes.
+  //console.error('msg', msg, inspect(msg))
+  //console.error('msg.toString()', msg.toString())
+  //console.error('msg.length', msg.length)
   msg = await (new Output()).encode(msg);
   return msg && process.stdout.write(msg);
 };
@@ -47,14 +53,14 @@ const fromWebExt = function read(abort, cb) {
 
 
 const handleMsg = async message => {
-  // console.error('msg', message, inspect(message))
+  //console.error('msg', message, inspect(message))
   const asBuffer = Buffer.from(message)
   if (messageDataCallback) {
     const _messageDataCallback = messageDataCallback
     messageDataCallback = null
     _messageDataCallback(null, asBuffer)
   } else {
-    console.log('buffering....')
+    //console.log('buffering....')
     messageDataBuffer.push(asBuffer)
   }
 }
@@ -94,10 +100,27 @@ const api = {
 }
 
 const onClose = () => {
-  console.log('muxrpc server closed')
+  //console.log('muxrpc server closed')
 } 
 
-const server = MRPC(null, manifest) (api)
+/*const server = MRPC(null, manifest) (api)
 const serverStream = server.createStream(onClose)
 
-pull(fromWebExt, serverStream, toWebExt)
+pull(fromWebExt, serverStream, toWebExt)*/
+
+Client((err, sbot) => {
+  if (err) {
+    console.error("could not connect to existing server instance, starting new one", err)
+    return
+  }
+  sbot.manifest().then(manifest => {
+    //console.error('manifest', inspect(manifest))
+    sbot.manifest = function () {
+      return manifest
+    }
+    const server = MRPC(null, manifest) (sbot)
+    const serverStream = server.createStream(onClose)
+
+    pull(fromWebExt, serverStream, toWebExt)
+  })
+})
