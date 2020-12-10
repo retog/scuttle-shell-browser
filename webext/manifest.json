@@ -10,6 +10,7 @@
   },
 
   "permissions": [
+ 		"activeTab",
     "nativeMessaging",
     "<all_urls>"
   ],
@@ -22,7 +23,8 @@
   ],
 
   "browser_action": {
-    "default_icon": "icons/message.svg"
+    "default_icon": "icons/message.svg",
+		"default_popup": "menu.html"
   },
   
   "browser_specific_settings": {

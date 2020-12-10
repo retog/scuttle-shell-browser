@@ -4,6 +4,16 @@ import { Buffer } from 'buffer'
 
 
 
+browser.runtime.onMessage.addListener(notify);
+
+function notify(message) {
+  if (message.direction === "from-menu-script") {
+    if (message.message.action === 'grant') {
+      console.log('granting acces to', message.message.target);
+      //TODO implement
+    }
+  }
+}
 
 let ports = []
 
