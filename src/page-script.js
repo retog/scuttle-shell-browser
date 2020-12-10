@@ -57,6 +57,22 @@ const client = MRPC(function (err, manifest) {
   console.log('adding client to window')
   window.client = client
   window.pull = pull
+
+  const outElem = document.getElementById('output')
+
+  const opts = {
+    limit: 100,
+    reverse: true
+  }
+
+  pull(
+    client.query.read(opts),
+    pull.drain(msg => {
+      outElem.innerHTML += `<pre>${JSON.stringify(msg, null, 2)}</pre>`
+      outElem.innerHTML += '<hr/>'
+    })
+  )
+
 })()
 
 const onClose = () => {
