@@ -43,18 +43,18 @@ function openLocalPort(p) {
 
 function connectPort(p) {
   //p.sender.tab.onClose(() => console.log('tab closed, should close connection'))
-  const [fromContentScript, toContentScript] = createConnection(p)
-  const [fromNativeScript, toNativeScript] = createNativeConnection()
+  const contentScriptStream = createConnection(p)
+  const nativeScriptStream = createNativeConnection()
 
   pull(
-    fromContentScript,
+    contentScriptStream,
     //logger('from content to native'),
-    toNativeScript
+    nativeScriptStream
   )
   pull(
-    fromNativeScript,
+    nativeScriptStream,
     //logger('from native to content'),
-    toContentScript
+    contentScriptStream
   )
 }
 
@@ -98,5 +98,5 @@ function createConnection(port) {
     })
   }
 
-  return [fromPort, toPort]
+  return {source: fromPort, sink: toPort}
 }
