@@ -10,18 +10,41 @@ function notify(message) {
   if (message.direction === "from-menu-script") {
     if (message.message.action === 'grant') {
       console.log('granting acces to', message.message.target);
-      //TODO implement
+      browser.storage.local.get({'granted': []}).then(({granted}) => {
+        console.log('granted acces to', granted)
+        Object.entries(unconnectedPorts).forEach(([key,p]) => {
+          const relevantURL = p.sender.url.split('?')[0].split('#')[0]
+          if (~granted.indexOf(relevantURL)) {
+            connectPort(p)
+            delete unconnectedPorts[p.sender.tab.id]
+          }
+        })
+      })
     }
   }
 }
 
-let ports = []
+let unconnectedPorts = []
 
-browser.runtime.onConnect.addListener(function connected(p) {
-  ports[p.sender.tab.id] = p
+browser.runtime.onConnect.addListener(async function connected(p) {
+  console.log('connection from', p.sender.url)
+  const relevantURL = p.sender.url.split('?')[0].split('#')[0]
+  const { granted } = await browser.storage.local.get('granted')
+  if (~granted.indexOf(relevantURL)) {
+    connectPort(p) 
+  } else {
+    unconnectedPorts[p.sender.tab.id] = p
+  }
+})
+
+function openLocalPort(p) {
+
+}
+
+function connectPort(p) {
   //p.sender.tab.onClose(() => console.log('tab closed, should close connection'))
   const [fromContentScript, toContentScript] = createConnection(p)
-  const [fromNativeScript, toNativeScript] = createNativeConnection(p)
+  const [fromNativeScript, toNativeScript] = createNativeConnection()
 
   pull(
     fromContentScript,
@@ -33,7 +56,7 @@ browser.runtime.onConnect.addListener(function connected(p) {
     //logger('from native to content'),
     toContentScript
   )
-})
+}
 
 function createNativeConnection() {
   const port = browser.runtime.connectNative("ssb4all")

@@ -110,7 +110,7 @@ pull(fromWebExt, serverStream, toWebExt)*/
 
 Client((err, sbot) => {
   if (err) {
-    console.error("could not connect to existing server instance, starting new one", err)
+    console.error("could not connect to ssb-server instance", err)
     return
   }
   sbot.manifest().then(manifest => {
