@@ -18,6 +18,7 @@ function notify(message) {
             connectPort(con.stream)
             portConnections[con.port.sender.tab.id].connected = true
           } else {
+            console.log(con.stream)
             con.stream.abort()
           }
         })
@@ -32,7 +33,7 @@ browser.runtime.onConnect.addListener(async function connected(port) {
   console.log('connection from', port.sender.url)
   const stream = createConnection(port)
   const relevantURL = port.sender.url.split('?')[0].split('#')[0]
-  const { granted } = await browser.storage.local.get('granted')
+  const { granted } = await browser.storage.local.get({'granted': []})
   if (~granted.indexOf(relevantURL)) {
     connectPort(stream) 
     portConnections[port.sender.tab.id] = { port, stream, connected: true }
@@ -60,7 +61,7 @@ function connectPort(contentScriptStream) {
 }
 
 function createNativeConnection() {
-  const port = browser.runtime.connectNative("ssb4all")
+  const port = browser.runtime.connectNative("scuttle_shell_browser")
   return createConnection(port)
 }
 

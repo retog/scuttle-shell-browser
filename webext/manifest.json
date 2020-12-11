@@ -30,7 +30,7 @@
   
   "browser_specific_settings": {
     "gecko": {
-      "id": "scuttle-shell@example.org",
+      "id": "scuttle-shell-browser@example.org",
       "strict_min_version": "50.0"
     }
   },

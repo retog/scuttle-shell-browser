@@ -7,7 +7,7 @@ browser.tabs.query({ "active": true, "currentWindow": true, "windowType": "norma
   tab => {
     const relevantURL = tab.url.split('?')[0].split('#')[0]
     locationArea.innerText = relevantURL
-    browser.storage.local.get('granted').then(result => {
+    browser.storage.local.get({'granted': []}).then(result => {
       let granted = result.granted
       const enabled = !!~granted.indexOf(relevantURL)
       toggleSwitch.checked = enabled

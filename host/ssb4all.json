@@ -1,7 +1,0 @@
-{
-  "name": "ssb4all",
-  "description": "A Native Messaging host that gives access to ssb to e ssb4all web extension",
-  "path": "/home/reto/Documents/retog/ssb4all/host/host-script.js",
-  "type": "stdio",
-  "allowed_extensions": [ "ssb4all@example.org" ]
-}
