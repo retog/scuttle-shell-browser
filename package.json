@@ -1,8 +1,7 @@
 {
-  "name": "page-extension-rpc",
+  "name": "scuttle-shell-browser",
   "version": "1.0.0",
-  "description": "## What it does",
-  "main": "webext/content-script.js",
+  "description": "Web Extension that allows webpages to access Secure Scuttlebutt",
   "scripts": {
     "build": "rollup -c",
     "browserify:ssb": "browserify -r ssb-client -i bufferutil -i utf-8-validate -s ssb -o webext/ssb-client.js",
