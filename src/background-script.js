@@ -16,7 +16,7 @@ function notify(message) {
           const relevantURL = con.port.sender.url.split('?')[0].split('#')[0]
           if (~granted.indexOf(relevantURL)) {
             connectPort(con.stream)
-            portConnections[port.sender.tab.id].connected = true
+            portConnections[con.port.sender.tab.id].connected = true
           } else {
             con.stream.abort()
           }
