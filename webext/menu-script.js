@@ -1,4 +1,3 @@
-console.log('menu opened')
 const toggleSwitch = document.getElementById('toggle')
 const locationArea = document.getElementById('location')
 // this doesn't work: browser.tabs.getCurrent().then(...
@@ -6,16 +5,13 @@ browser.tabs.query({ "active": true, "currentWindow": true, "windowType": "norma
   tabs => tabs[0]
 ).then(
   tab => {
-    console.log('tab', tab)
     const relevantURL = tab.url.split('?')[0].split('#')[0]
     locationArea.innerText = relevantURL
     browser.storage.local.get('granted').then(result => {
       let granted = result.granted
       const enabled = !!~granted.indexOf(relevantURL)
-      console.log('enabled =', enabled)
       toggleSwitch.checked = enabled
       toggleSwitch.addEventListener('change', (e) => {
-        console.log('changing', relevantURL, enabled, e.target.checked)
         if (e.target.checked) {
           granted.push(relevantURL)
         } else {
