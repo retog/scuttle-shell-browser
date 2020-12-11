@@ -1,12 +1,12 @@
 {
 
   "manifest_version": 2,
-  "name": "Page to extension messaging",
-  "description": "Visit https://mdn.github.io/webextensions-examples/content-script-page-script-messaging.html for the demo. See https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Examples#page-to-extension-messaging",
-  "version": "1.0",
-  "homepage_url": "https://github.com/mdn/webextensions-examples/tree/master/page-to-extension-messaging",
+  "name": "Scuttle Shell Browser",
+  "description": "Allows webpages to access Scuttlebutt",
+  "version": "1.0.0",
+  "homepage_url": "https://github.com/retog/scuttle-shell-browser",
   "icons": {
-    "48": "icons/message-48.png"
+    "48": "icons/shelve.svg"
   },
 
   "permissions": [
@@ -24,13 +24,13 @@
   ],
 
   "browser_action": {
-    "default_icon": "icons/message.svg",
+    "default_icon": "icons/shelve.svg",
 		"default_popup": "menu.html"
   },
   
   "browser_specific_settings": {
     "gecko": {
-      "id": "ssb4all@example.org",
+      "id": "scuttle-shell@example.org",
       "strict_min_version": "50.0"
     }
   },

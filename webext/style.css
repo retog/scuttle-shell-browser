@@ -1,10 +1,15 @@
+body {
+  background-color: #ede7f6;
+  font-family: sans-serif;
+}
+
 .bold {
   font-weight: bold;
 }
 
 .grid {
   display: grid;
-  gap: 4px;
+  gap: 2px 8px;
   grid-template-columns: auto 68px;
 }
 
@@ -14,10 +19,15 @@
 
 .right {
   grid-column: 2;
-  grid-row: 1 / span 2;
+  grid-row: 2;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-end;
+}
+
+#location {
+  font-size: smaller;
+  line-height: 20px;
 }
 
 /* The switch - the box around the slider */
@@ -43,7 +53,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #d1c4e9;
+  background-color: #7e57c2;
   -webkit-transition: background-color .4s;
   transition: background-color .4s;
 }
