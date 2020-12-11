@@ -12,11 +12,13 @@ function notify(message) {
       console.log('granting acces to', message.message.target);
       browser.storage.local.get({'granted': []}).then(({granted}) => {
         console.log('granted acces to', granted)
-        Object.entries(unconnectedPorts).forEach(([key,p]) => {
-          const relevantURL = p.sender.url.split('?')[0].split('#')[0]
+        Object.values(portConnections).filter(connection => !connection.connected).forEach((con) => {
+          const relevantURL = con.port.sender.url.split('?')[0].split('#')[0]
           if (~granted.indexOf(relevantURL)) {
-            connectPort(p)
-            delete unconnectedPorts[p.sender.tab.id]
+            connectPort(con.stream)
+            portConnections[port.sender.tab.id].connected = true
+          } else {
+            con.stream.abort()
           }
         })
       })
@@ -24,26 +26,25 @@ function notify(message) {
   }
 }
 
-let unconnectedPorts = []
+let portConnections = []
 
-browser.runtime.onConnect.addListener(async function connected(p) {
-  console.log('connection from', p.sender.url)
-  const relevantURL = p.sender.url.split('?')[0].split('#')[0]
+browser.runtime.onConnect.addListener(async function connected(port) {
+  console.log('connection from', port.sender.url)
+  const stream = createConnection(port)
+  const relevantURL = port.sender.url.split('?')[0].split('#')[0]
   const { granted } = await browser.storage.local.get('granted')
   if (~granted.indexOf(relevantURL)) {
-    connectPort(p) 
+    connectPort(stream) 
+    portConnections[port.sender.tab.id] = { port, stream, connected: true }
   } else {
-    unconnectedPorts[p.sender.tab.id] = p
+    portConnections[port.sender.tab.id] = { port, stream, connected: false }
   }
 })
 
-function openLocalPort(p) {
 
-}
-
-function connectPort(p) {
+function connectPort(contentScriptStream) {
   //p.sender.tab.onClose(() => console.log('tab closed, should close connection'))
-  const contentScriptStream = createConnection(p)
+  
   const nativeScriptStream = createNativeConnection()
 
   pull(
