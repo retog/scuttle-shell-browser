@@ -1,0 +1,6 @@
+:not(.waited) .after_wait {
+  display: none
+}
+.waited .after_wait {
+  display: block
+}

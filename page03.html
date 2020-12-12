@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="./index.css">
+  </head>
+  <body>
+    <h2>Scuttle Shell Browser example</h2>
+    <h1>who wrote these posts?</h1>
+    <p>This is an browser equivalent of 
+      <a href="https://github.com/mixmix/ssb-client-basic#v03---who-wrote-these-posts">
+        https://github.com/mixmix/ssb-client-basic#v03---who-wrote-these-posts</a>.</p> 
+    <div id="output">
+      <div style="background-color: yellow;" class="after_wait">
+        This Page needs to access Scuttlebut. Make sure that Scuttle Shell Browser is installed and that "SSB access" is
+        switched on for this page.
+      </div>
+    </div>
+    <script src="connect-ssb.js"></script>
+    <script type="module">
+      import daysPosts from './source/days-posts.js'
+
+      const outElem = document.getElementById('output')
+
+      const opts = {
+        limit: 100,
+        reverse: true
+      }
+      connectSsb().then(server => {
+        outElem.innerHTML = ''
+        const opts = {
+          limit: 100,
+          reverse: true
+        }
+
+        function prettyPrint (msg) {
+          outElem.innerHTML += `<pre>${JSON.stringify(msg, null, 2)}</pre>`
+          outElem.innerHTML += '<hr>'
+          // this just print the full object out as a string that's been nicely indented
+          // with each level of nesting
+        }
+
+        const today = new Date(2018, 9, 17)
+
+        console.time('get posts')
+        pull(
+          daysPosts(server)(today),
+          pull.paraMap(getAuthorName, 50), // run up to 50 asyncrhonous maps in parallel
+          pull.collect(onDone)
+        )
+
+        // Note you could use pull.asyncMap, but it only does 1 async map at a time... it's 240x slower on my machine!
+
+        function getAuthorName (data, cb) {
+          // NOTE the data is coming in from the dayPosts source and has been mapped into the form { author, timestamp, text, root }
+
+          // cb is a function provided to us by pull-paramap which we use to pass results out once we're done and to pass things on to the next part of the stream (the collect here)
+
+          const feedId = data.author
+
+          const opts = {
+            limit: 1,
+            reverse: true,
+            query: [
+              {
+                $filter: {
+                  value: {
+                    author: feedId,
+                    content: {
+                      type: 'about',
+                      about: feedId,
+                      name: { $is: 'string' } // there's a name string present
+                    }
+                  },
+                  timestamp: { $gt: 0 } // a hack that forces ordering by timestamp
+                }
+              },
+              {
+                $map: {
+                  name: ['value', 'content', 'name']
+                }
+              }
+            ]
+          }
+
+          pull(
+            server.query.read(opts),
+            pull.collect((err, results) => {
+              if (err) {
+                cb(err)
+                return
+              }
+
+              var name
+              if (!results || !results.length) name = feedId
+              else name = results[0].name
+              // console.log(name) // debug / see the names fly by as we get them!
+
+              data.authorName = name
+              // stample the name we found to the data object
+
+              cb(null, data)
+            })
+          )
+        }
+
+        function onDone (err, data) {
+          if (err) {
+            console.error('oh noes', err)
+          }
+
+          data.forEach(msg => {
+            prettyPrint(msg)
+          })
+
+          console.log(`${data.length} messages`)
+          console.timeEnd('get posts')
+        }
+
+      })
+      setTimeout(() => document.body.classList.add('waited'), 1000)
+    </script>
+  </body>
+</html>

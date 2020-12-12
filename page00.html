@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="./index.css">
+  </head>
+  <body>
+    <h1>Scuttle Shell Browser example page</h1>
+    <p>This is an browser equivalent of 
+      <a href="https://github.com/mixmix/ssb-client-basic#v00---whoami">https://github.com/mixmix/ssb-client-basic#v00---whoami</a></p> 
+    <div id="output">
+      <div style="background-color: yellow;" class="after_wait">
+        This Page needs to access Scuttlebut. Make sure that Scuttle Shell Browser is installed and that "SSB access" is
+        switched on for this page.
+      </div>
+    </div>
+    <script src="connect-ssb.js"></script>
+    <script>
+      const outElem = document.getElementById('output')
+
+      const opts = {
+        limit: 100,
+        reverse: true
+      }
+      connectSsb().then(ssb => {
+        outElem.innerHTML = ''
+        ssb.whoami((err, keys) => {
+          outElem.innerHTML += 'whoami details: <pre>' + JSON.stringify(keys, undefined, 2)+'</pre>'
+        })
+      })
+      setTimeout(() => document.body.classList.add('waited'), 1000)
+    </script>
+  </body>
+</html>

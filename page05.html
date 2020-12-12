@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <link rel="stylesheet" href="./index.css">
+</head>
+
+<body>
+  <h2>Scuttle Shell Browser example</h2>
+  <h1>faces to names</h1>
+  <p>This is an browser equivalent of
+    <a
+      href="https://github.com/mixmix/ssb-client-basic#v05---faces-to-names">https://github.com/mixmix/ssb-client-basic#v05---faces-to-names</a>
+  </p>
+  <div id="output">
+    <div style="background-color: yellow;" class="after_wait">
+      This Page needs to access Scuttlebut. Make sure that Scuttle Shell Browser is installed and that "SSB access" is
+      switched on for this page.
+    </div>
+  </div>
+  <script src="connect-ssb.js"></script>
+  <script type="module">
+    import daysPosts from './source/days-posts.js'
+    import getName from './async/get-name.js'
+    import getAvatar from './async/get-avatar.js'
+
+    const outElem = document.getElementById('output')
+
+    connectSsb().then(server => {
+      outElem.innerHTML = 'Loading posts...'
+      const today = new Date(2018, 9, 17)
+      console.time('get posts')
+      pull(
+        daysPosts(server)(today),
+        pull.paraMap(addName, 50), // run up to 50 asyncrhonous maps in parallel
+        pull.paraMap(addAvatar, 50), // run up to 50 asyncrhonous maps in parallel
+        pull.collect(onDone)
+      )
+
+      function addName (data, cb) {
+        getName(server)(data.author, (err, name) => {
+          if (err) cb(err)
+          else {
+            data.authorName = name
+            cb(null, data)
+          }
+        })
+      }
+      function addAvatar (data, cb) {
+        getAvatar(server)(data.author, (err, avatar) => {
+          if (err) cb(err)
+          else {
+            data.avatar = avatar
+            cb(null, data)
+          }
+        })
+      }
+
+      function onDone (err, data) {
+        if (err) {
+          console.error('oh noes', err)
+          return
+        }
+
+        outElem.innerHTML = Messages(data)
+
+        console.log(`${data.length} messages`)
+        console.timeEnd('get posts')
+
+      }
+
+
+      function Messages (data) {
+        return `
+          <div style="font-family: arial;">
+            ${data.map(Message)}
+          </div>
+        `
+      }
+
+      function Message (msgData) {
+        const { avatar, authorName, timestamp, text, root } = msgData
+
+        return `
+          <div style="margin: 2rem;">
+            ${Avatar(avatar)}
+            <strong>${authorName}</strong> - ${new Date(timestamp).toLocaleString()}
+            <p style="font-size: .8rem; margin: 0"> ${root ? 'thread:' : ''} ${root}</p>
+            <p>${text}</p>
+          </div>
+        `
+      }
+
+      function Avatar (blobId) {
+        if (!blobId) return
+
+        const url = `http://localhost:8989/blobs/get/${blobId}`
+        // this may be patchbay specific
+
+        return `
+          <img src=${url} style="width: 2rem; height: 2rem;"/>
+        `
+      }
+
+    })
+    setTimeout(() => document.body.classList.add('waited'), 1000)
+  </script>
+</body>
+
+</html>
