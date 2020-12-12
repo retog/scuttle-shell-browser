@@ -2,10 +2,42 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <style>
+      :not(.waited) .after_wait {
+        display: none
+      }
+      .waited .after_wait {
+        display: block
+      }
+    </style>
   </head>
   <body>
     <p>RPC connection with SSB via native messaging.</p> 
-    <div id="output"></div>
-    <script src="page-script.js"></script>
+    <div id="output">
+      <div style="background-color: yellow;" class="after_wait">
+        This Page needs to access Scuttlebut. Make sure that Scuttle Shell Browser is installed and that "SSB access" is
+        switched on for this page.
+      </div>
+    </div>
+    <script src="connect-ssb.js"></script>
+    <script>
+      const outElem = document.getElementById('output')
+
+      const opts = {
+        limit: 100,
+        reverse: true
+      }
+      connectSsb().then(ssb => {
+        outElem.innerHTML = ''
+        pull(
+          client.query.read(opts),
+          pull.drain(msg => {
+            outElem.innerHTML += `<pre>${JSON.stringify(msg, null, 2)}</pre>`
+            outElem.innerHTML += '<hr/>'
+          })
+        )
+      })
+      setTimeout(() => document.body.classList.add('waited'), 1000)
+    </script>
   </body>
 </html>

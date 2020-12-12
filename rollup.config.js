@@ -73,12 +73,12 @@ export default [{
 		clearScreen: false
 	}
 }, {
-	input: 'src/page-script.js',
+	input: 'src/connect-ssb-page-script.js',
 	output: {
 		sourcemap: true,
 		format: 'iife',
 		name: 'app',
-		file: 'site/page-script.js',
+		file: 'site/connect-ssb.js',
 		intro: 'const global = window;'
 	},
 	plugins: [
