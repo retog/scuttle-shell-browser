@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="./index.css">
+  </head>
+  <body>
+    <h2>Scuttle Shell Browser example</h2>
+    <h1>A pull-stream query!</h1>
+    <p>This is an browser equivalent of 
+      <a href="https://github.com/mixmix/ssb-client-basic#v01---a-pull-stream-query">https://github.com/mixmix/ssb-client-basic#v01---a-pull-stream-query</a></p> 
+    <div id="output">
+      <div style="background-color: yellow;" class="after_wait">
+        This Page needs to access Scuttlebut. Make sure that Scuttle Shell Browser is installed and that "SSB access" is
+        switched on for this page.
+      </div>
+    </div>
+    <script src="connect-ssb.js"></script>
+    <script>
+      const outElem = document.getElementById('output')
+
+      const opts = {
+        limit: 100,
+        reverse: true
+      }
+      connectSsb().then(server => {
+        outElem.innerHTML = ''
+        const opts = {
+          limit: 100,
+          reverse: true
+        }
+
+        function prettyPrint (msg) {
+          outElem.innerHTML += `<pre>${JSON.stringify(msg, null, 2)}</pre>`
+          outElem.innerHTML += '<hr>'
+          // this just print the full object out as a string that's been nicely indented
+          // with each level of nesting
+        }
+
+        pull(
+          server.query.read(opts),
+          pull.filter(msg => msg.value.content.type === 'post'),
+          pull.collect(onDone)
+        )
+
+        function onDone (err, msgs) {
+          if (err) {
+            console.error(err)
+            server.close()
+            return
+          }
+
+          msgs.forEach(msg => {
+            prettyPrint(msg)
+          })
+        }
+
+      })
+      setTimeout(() => document.body.classList.add('waited'), 1000)
+    </script>
+  </body>
+</html>

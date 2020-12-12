@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="./index.css">
+  </head>
+  <body>
+    <h2>Scuttle Shell Browser example</h2>
+    <h1>v02 - todays post</h1>
+    <p>This is an browser equivalent of 
+      <a href="https://github.com/mixmix/ssb-client-basic#v02---todays-post">https://github.com/mixmix/ssb-client-basic#v02---todays-post</a></p> 
+    <div id="output">
+      <div style="background-color: yellow;" class="after_wait">
+        This Page needs to access Scuttlebut. Make sure that Scuttle Shell Browser is installed and that "SSB access" is
+        switched on for this page.
+      </div>
+    </div>
+    <script src="connect-ssb.js"></script>
+    <script>
+      const outElem = document.getElementById('output')
+
+      const opts = {
+        limit: 100,
+        reverse: true
+      }
+      connectSsb().then(server => {
+        outElem.innerHTML = ''
+
+        function prettyPrint (msg) {
+          outElem.innerHTML += `<pre>${JSON.stringify(msg, null, 2)}</pre>`
+          outElem.innerHTML += '<hr>'
+          // this just print the full object out as a string that's been nicely indented
+          // with each level of nesting
+        }
+
+        const today = new Date()
+        const opts = {
+          reverse: true,
+          query: [
+            {
+              $filter: {
+                value: {
+                  content: { type: 'post' },
+                  timestamp: {
+                    $gte: Number(startOfDay(today)),
+                    $lt: Number(startOfDay(today, +1))
+                  }
+                }
+              }
+            },
+            {
+              $map: {
+                author: ['value', 'author'],
+                timestamp: ['value', 'timestamp'],
+                text: ['value', 'content', 'text'],
+                root: ['value', 'content', 'root'] // the root messages of a thread, this is present if this post is a reply to another message
+              }
+            }
+          ]
+        }
+
+        pull(
+          server.query.read(opts),
+          pull.collect(onDone)
+        )
+
+        function onDone (err, msgs) {
+          if (err) {
+            console.error('oh noes', err)
+            return
+          }
+
+          msgs.forEach(msg => {
+            prettyPrint(msg)
+
+          })
+        }
+
+      })
+      function startOfDay (time = new Date(), dayOffset = 0) {
+        // dayOffset = 0 means if this argument is not supplied to set it to default to 0
+
+        const year = time.getFullYear()
+        const month = time.getMonth()
+        const date = time.getDate() + dayOffset
+        return new Date(year, month, date, 0, 0, 0) // 0 hours, 0 minutes, 0 secords
+      }
+
+      setTimeout(() => document.body.classList.add('waited'), 1000)
+    </script>
+  </body>
+</html>
