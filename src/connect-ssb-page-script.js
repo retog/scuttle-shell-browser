@@ -1,7 +1,9 @@
 import MRPC from 'muxrpc'
 import { pull } from 'pull-stream'
 import { Buffer } from 'buffer'
+import _pullParamap from 'pull-paramap' 
 
+pull.paraMap = _pullParamap
 
 window.pull = pull
 
