@@ -108,6 +108,21 @@ const serverStream = server.createStream(onClose)
 
 pull(fromWebExt, serverStream, toWebExt)*/
 
+function asyncifyManifest(manifest) {
+  if (typeof manifest !== 'object' || manifest === null) return manifest
+  let asyncified = {}
+  for (let k in manifest) {
+    var value = manifest[k]
+    // Rewrite re-exported sync methods as async,
+    // except for manifest method, as we define it later
+    if (value === 'sync' && k !== 'manifest') {
+      value = 'async'
+    }
+    asyncified[k] = value
+  }
+  return asyncified
+}
+
 Client((err, sbot) => {
   if (err) {
     console.error("could not connect to ssb-server instance", err)
@@ -115,10 +130,11 @@ Client((err, sbot) => {
   }
   sbot.manifest().then(manifest => {
     //console.error('manifest', inspect(manifest))
+    const asyncManifest = asyncifyManifest(manifest)
     sbot.manifest = function () {
       return manifest
     }
-    const server = MRPC(null, manifest) (sbot)
+    const server = MRPC(null, asyncManifest) (sbot)
     const serverStream = server.createStream(onClose)
 
     pull(fromWebExt, serverStream, toWebExt)
