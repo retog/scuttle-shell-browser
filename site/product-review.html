@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <link rel="stylesheet" href="./index.css">
+</head>
+
+<body>
+  <h2>Scuttle Shell Browser example</h2>
+  <h1>Review our product</h1>
+  <p>The #6 BunaB is a quality product meeting and exceeding the highest requirements in
+    regards to quality and long term user satisfaction.
+  </p>
+  <p>
+    However, don't just take our word for it, read the following reviews. To guarantee that the
+    reviews are genuine and from people you can trust we use Scuttlebut so that the reviews are
+    stored on the decentralized Secure Scuttlebutt network outside our control.
+  </p>
+  <img src="images/BunaB.jpg" style="width: 50%" />
+  <div id="output">
+    <div style="background-color: yellow;" class="after_wait">
+      This Page needs to access Scuttlebut. Make sure that Scuttle Shell Browser is installed and that "SSB access" is
+      switched on for this page.
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="connect-ssb.js"></script>
+  <script type="module">
+    import daysPosts from './source/days-posts.js'
+    import getName from './async/get-name.js'
+    import getAvatar from './async/get-avatar.js'
+
+    const outElem = document.getElementById('output')
+
+    connectSsb().then(server => {
+      outElem.innerHTML = 'Loading reviews from Scuttlebutt...'
+      console.time('get posts')
+      const item = 'No. 6 BunaB'
+      const opts = {
+        limit: 5,
+        reverse: true,
+        query: [
+          {
+            $filter: {
+              value: {
+                content: {
+                  type: 'post',
+                  'channel': 'reviews',
+                  item
+                }
+              }
+            }
+          }, {
+            $map: {
+              author: ['value', 'author'],
+              timestamp: ['value', 'timestamp'],
+              text: ['value', 'content', 'text'],
+              root: ['value', 'content', 'root'] // the root messages of a thread, this is present if this post is a reply to another message
+            }
+          }
+        ]
+      }
+      pull(
+        server.query.read(opts),
+        pull.paraMap(addName, 50), // run up to 50 asynchronous maps in parallel
+        pull.paraMap(addAvatar, 50), // run up to 50 asynchronous maps in parallel
+        pull.collect(onDone)
+      )
+
+      function addName(data, cb) {
+        console.log('adding name', data)
+        getName(server)(data.author, (err, name) => {
+          if (err) cb(err)
+          else {
+            data.authorName = name
+            console.log('added name', name)
+            cb(null, data)
+          }
+        })
+      }
+      function addAvatar(data, cb) {
+        getAvatar(server)(data.author, (err, avatar) => {
+          if (err) cb(err)
+          else {
+            data.avatar = avatar
+            console.log('added avatar', avatar)
+            cb(null, data)
+          }
+        })
+      }
+
+      function onDone(err, data) {
+        console.log('finally')
+        if (err) {
+          console.error('oh noes', err)
+          return
+        }
+
+        outElem.innerHTML = Messages(data)
+
+        addForm()
+
+        console.log(`${data.length} messages`)
+        console.timeEnd('get posts')
+
+      }
+
+
+      function Messages(data) {
+        return `
+            <div style="font-family: arial;">
+              ${data.map(Message)}
+            </div>
+          `
+      }
+
+      function Message(msgData) {
+        const { avatar, authorName, timestamp, text, root } = msgData
+
+        return `
+            <div style="margin: 2rem;">
+              ${avatar ? Avatar(avatar) : ''}
+              <strong>${authorName}</strong> - ${new Date(timestamp).toLocaleString()}
+              <p>${text ? window.marked(text) : ''}</p>
+            </div>
+          `
+      }
+
+      function Avatar(blobId) {
+        if (!blobId) return
+
+        const url = `http://localhost:8989/blobs/get/${blobId}`
+        // this may be patchbay specific
+
+        return `
+            <img src=${url} style="width: 2rem; height: 2rem;"/>
+          `
+      }
+
+      function addForm() {
+        const form = `
+        <h2>Publish your own review of ${item}</h2>
+        <textarea id="review"  style="width: 80%">
+# Review of ${item}
+
+</textarea>
+        <br/>
+        <button id="publish">Publish</button>
+        `
+        outElem.innerHTML += form
+        document.getElementById('publish').addEventListener('click', () => publishReview(document.getElementById('review').value))
+      }
+
+      function publishReview(review) {
+        const text = review+`\n\n---\n\nPublished on ${window.location} with Scuttle Shell Browser`
+        server.publish({
+          type: 'post',
+          'channel': 'reviews',
+          item,
+          text
+        }, function (err, msg) {
+            console.log(msg);
+            window.location.reload()
+        });
+      }
+
+    })
+    setTimeout(() => document.body.classList.add('waited'), 1000)
+  </script>
+</body>
+
+</html>

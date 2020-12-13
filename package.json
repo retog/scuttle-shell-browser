@@ -4,7 +4,7 @@
   "description": "Web Extension that allows webpages to access Secure Scuttlebutt",
   "scripts": {
     "build": "rollup -c",
-    "start:ext": "web-ext run --no-reload --bc -v -u \"about:debugging#/runtime/this-firefox\"--source-dir ./webext/",
+    "start:ext": "web-ext run --no-reload --bc -v -u \"http://localhost:9090/product-review.html\" -u \"about:debugging#/runtime/this-firefox\" --source-dir ./webext/",
     "serve": "http-server site -p 9090"
   },
   "webExt": {
