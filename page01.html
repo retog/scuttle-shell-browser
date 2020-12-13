@@ -19,10 +19,6 @@
     <script>
       const outElem = document.getElementById('output')
 
-      const opts = {
-        limit: 100,
-        reverse: true
-      }
       connectSsb().then(server => {
         outElem.innerHTML = ''
         const opts = {
