@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import {Setup} from "web-ext-native-msg"
 
 const handlerAfterSetup = info => {
