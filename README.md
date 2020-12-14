@@ -32,12 +32,10 @@ are running Patchwork). You need to install native messaging host by running
 
 To run the example you need to have the extension intalled and access the example page.
 
-    npm run-script start:ext
+    npm run-script run
 
-This should start a browser with the extension. Alternatively you can also load the extension from the `webext` folder as temporary extension in your browser. Access the file `page.html` in the `site` folder.
+This should start a browser with the extension. Alternatively you can also load the extension from the `webext` folder as temporary extension in your browser. It also start a web--server serving the `site` on port 9090.
 
-    npm run-script serve
-
-Now you can access http://localhost:9090/page.html
+Now you can access http://localhost:9090/
 
 

@@ -2,12 +2,14 @@
   "name": "scuttle-shell-browser",
   "version": "1.0.0",
   "description": "Web Extension that allows webpages to access Secure Scuttlebutt",
+  "bin": "./setup/native-host.js",
   "scripts": {
     "build": "rollup -c",
-    "start:ext": "web-ext run --no-reload --bc -v -u \"http://localhost:9090/product-review.html\" -u \"about:debugging#/runtime/this-firefox\" --source-dir ./webext/",
-    "webext:build":"web-ext build",
+    "run:browser": "web-ext run --no-reload --bc -v -u \"http://localhost:9090/product-review.html\" -u \"about:debugging#/runtime/this-firefox\" --source-dir ./webext/",
+    "run:server": "http-server site -p 9090",
+    "run": "run-p run:*",
+    "webext:build": "web-ext build",
     "webext:sign": "web-ext sign --api-key=$AMO_JWT_ISSUER --api-secret=$AMO_JWT_SECRET",
-    "serve": "http-server site -p 9090",
     "setup:native-host": "node setup/native-host.js"
   },
   "webExt": {
@@ -29,6 +31,7 @@
     "@rollup/plugin-node-resolve": "^11.0.0",
     "browserify": "^17.0.0",
     "http-server": "^0.12.3",
+    "npm-run-all": "^4.1.5",
     "rollup": "^2.34.1",
     "rollup-plugin-css-only": "^3.0.0",
     "rollup-plugin-livereload": "^2.0.0",
