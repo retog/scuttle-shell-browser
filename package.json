@@ -1,6 +1,6 @@
 {
   "name": "scuttle-shell-browser",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Web Extension that allows webpages to access Secure Scuttlebutt",
   "bin": "./setup/native-host.js",
   "scripts": {
