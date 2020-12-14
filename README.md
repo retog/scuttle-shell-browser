@@ -26,8 +26,9 @@ Building
 Running
 
 To use Scuttle Shell Browser you need an [ssb-server](https://github.com/ssbc/ssb-server) running on your machine (this is the case when you
-are running Patchwork). You need to install native messaging for the manifest in `host/scuttle_shell_browser.json`, see https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Native_messaging to learn how to do this on your platform. Note that you need to adapt the paths in the manifest file and that `host/host-script.js` must be executable.
+are running Patchwork). You need to install native messaging host by running
 
+    npm run-script setup:native-host
 
 To run the example you need to have the extension intalled and access the example page.
 

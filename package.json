@@ -5,7 +5,10 @@
   "scripts": {
     "build": "rollup -c",
     "start:ext": "web-ext run --no-reload --bc -v -u \"http://localhost:9090/product-review.html\" -u \"about:debugging#/runtime/this-firefox\" --source-dir ./webext/",
-    "serve": "http-server site -p 9090"
+    "webext:build":"web-ext build",
+    "webext:sign": "web-ext sign --api-key=$AMO_JWT_ISSUER --api-secret=$AMO_JWT_SECRET",
+    "serve": "http-server site -p 9090",
+    "setup:native-host": "node setup/native-host.js"
   },
   "webExt": {
     "sourceDir": "webext/"

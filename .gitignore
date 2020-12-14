@@ -7,3 +7,4 @@ webext/content-script.js.map
 webext/background.js
 webext/background.js.map
 webext/ssb-client.js
+web-ext-artifacts/

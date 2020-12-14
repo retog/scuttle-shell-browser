@@ -1,7 +1,0 @@
-{
-  "name": "scuttle_shell_browser",
-  "description": "A Native Messaging host that gives access to ssb to the Scuttle Shell Browser web extension",
-  "path": "/home/reto/Documents/retog/ssb4all/host/host-script.js",
-  "type": "stdio",
-  "allowed_extensions": [ "scuttle-shell-browser@example.org" ]
-}
