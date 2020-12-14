@@ -5,6 +5,7 @@ const handlerAfterSetup = info => {
   console.log('-----')
   console.log('The Scuttle Shell Browser host has been installed.')
   console.log('Install the Scuttle Shell Browser Firefox Add-on if you haven\'t already.')
+  console.log('You can download the Add-On here: https://github.com/retog/scuttle-shell-browser/releases/tag/1.0.0')
 };
 
 const setup = new Setup({
