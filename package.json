@@ -10,7 +10,7 @@
     "run": "run-p run:*",
     "webext:build": "web-ext build",
     "webext:sign": "web-ext sign --api-key=$AMO_JWT_ISSUER --api-secret=$AMO_JWT_SECRET",
-    "setup:native-host": "cd setup; node native-host.js"
+    "setup:native-host": "node setup/native-host.js"
   },
   "webExt": {
     "sourceDir": "webext/"
