@@ -1,5 +1,3 @@
-#!/usr/local/bin/node
-
 import MRPC from 'muxrpc'
 import { pull } from 'pull-stream'
 import { Buffer } from 'buffer'
