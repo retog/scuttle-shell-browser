@@ -3,7 +3,7 @@
   "manifest_version": 2,
   "name": "Scuttle Shell Browser",
   "description": "Allows webpages to access Scuttlebutt",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "homepage_url": "https://github.com/retog/scuttle-shell-browser",
   "icons": {
     "48": "icons/shelve.svg"
