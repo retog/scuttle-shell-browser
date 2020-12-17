@@ -7,7 +7,35 @@ pull.paraMap = _pullParamap
 
 window.pull = pull
 
+function ping() {
+  window.postMessage({
+    direction: 'from-page-script',
+    action: 'ping'
+  }, '*');
+}
+
+function contentLoaded() {
+  ping()
+  return new Promise((resolve, reject) => {
+    const onMessage = (event) => {
+      if (event.source == window &&
+          event.data &&
+          event.data.direction == 'from-content-script') {
+        if (event.data.action == 'ping') {
+          window.removeEventListener('message', onMessage)
+          resolve()
+        } 
+      }
+    }
+    window.addEventListener('message', onMessage)
+  })
+}
+
 window.connectSsb = function() {
+  return contentLoaded().then(connectSsbNoWait)
+}
+
+function connectSsbNoWait() {
   return new Promise((resolve, reject) => {
 
     let messageDataCallback = null
@@ -24,18 +52,22 @@ window.connectSsb = function() {
     }
 
 
-    window.addEventListener("message", (event) => {
+    window.addEventListener('message', (event) => {
       if (event.source == window &&
           event.data &&
-          event.data.direction == "from-content-script") {
-            const asBuffer = Buffer.from(event.data.message)
-            if (messageDataCallback) {
-              const _messageDataCallback = messageDataCallback
-              messageDataCallback = null
-              _messageDataCallback(null, asBuffer)
-            } else {
-              messageDataBuffer.push(asBuffer)
-            }
+          event.data.direction == 'from-content-script') {
+        if (event.data.action == 'ping') {
+          //ignored ping()
+        } else {
+          const asBuffer = Buffer.from(event.data.message)
+          if (messageDataCallback) {
+            const _messageDataCallback = messageDataCallback
+            messageDataCallback = null
+            _messageDataCallback(null, asBuffer)
+          } else {
+            messageDataBuffer.push(asBuffer)
+          }
+        }
       }
     });
 
@@ -44,14 +76,15 @@ window.connectSsb = function() {
         source(null, function more(end,data) {
           if (end) return done()
           window.postMessage({
-            direction: "from-page-script",
+            direction: 'from-page-script',
             message: data
-          }, "*")
+          }, '*')
           source(null, more)
         })
       }
     }
-    const client = MRPC(function (err, manifest) {
+
+    const clientBuilder = MRPC(function (err, manifest) {
       if (err) reject(err)
       else {
     
@@ -62,7 +95,9 @@ window.connectSsb = function() {
         
         resolve(client)
       }
-    })()
+    })
+
+    const client = clientBuilder()
     
     const onClose = () => {
       console.log('connected to muxrpc server')

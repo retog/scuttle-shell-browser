@@ -16,21 +16,30 @@ const fromPage = function read(abort, cb) {
 }
 
 
+function ping() {
+  window.postMessage({
+    direction: "from-content-script",
+    action: 'ping'
+  }, window.location.origin);
+}
+
 window.addEventListener("message", (event) => {
-  if (event.source == window &&
-      event.data &&
-      event.data.direction == "from-page-script") {
+  if (event.source == window && event.data && event.data.direction == "from-page-script") {
+      if (event.data.action == "ping") {
+        ping()
+      } else {
         //new Uint8Array(event.data.message) is not accepted by muxrpc
         const asBuffer = Buffer.from(event.data.message)
         if (messageDataCallback) {
-          const _messageDataCallback = messageDataCallback
-          messageDataCallback = null
-          _messageDataCallback(null, asBuffer)
+            const _messageDataCallback = messageDataCallback
+            messageDataCallback = null
+            _messageDataCallback(null, asBuffer)
         } else {
           console.log('buffering....')
           messageDataBuffer.push(asBuffer)
         }
-  }
+      }
+    }
 });
 
 const toPage = function sink(done) {
@@ -93,3 +102,4 @@ const toBackgroundScript = function sink(done) {
 
 pull(fromPage, toBackgroundScript())
 pull(fromBackgroundScript, toPage())
+ping()
