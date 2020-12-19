@@ -2,6 +2,7 @@
 
 import {Setup} from "web-ext-native-msg"
 import path from 'path'
+import fs from 'fs'
 
 const handlerAfterSetup = info => {
   const {configDirPath, shellScriptPath, manifestPath} = info;
@@ -12,10 +13,13 @@ const handlerAfterSetup = info => {
 };
 
 const getMainScriptPath = () => {
-  const [, scriptPath] = process.argv;
+  const [, binPath] = process.argv;
+  const scriptPath = fs.realpathSync(binPath);
   const mainScriptPath = path.resolve(path.dirname(scriptPath), '../host/host-script.js');
+  console.log('mainScriptPath: '+mainScriptPath)
   return mainScriptPath;
 };
+
 
 const setup = new Setup({
   hostDescription: "Exposes an ssb-client to the scuttle shell browser extension",
