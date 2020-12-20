@@ -23,7 +23,7 @@
       connectSsb().then(ssb => {
         outElem.innerHTML = ''
         pull(
-          client.query.read(opts),
+          ssb.query.read(opts),
           pull.drain(msg => {
             outElem.innerHTML += `<pre>${JSON.stringify(msg, null, 2)}</pre>`
             outElem.innerHTML += '<hr/>'
