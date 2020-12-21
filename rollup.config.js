@@ -112,6 +112,38 @@ export default [{
 	watch: {
 		clearScreen: false
 	}
+}, {
+	input: 'src/ssb-connect.js',
+	output: {
+		sourcemap: true,
+		format: 'es',
+		file: 'site/ssb-connect.js'
+	},
+	plugins: [
+    commonjs(),
+    globals(),
+		builtins(),
+		resolve({
+			browser: true,
+			dedupe: []
+		}),
+		
+
+		// In dev mode, call `npm run start` once
+		// the bundle has been generated
+		!production && serve(),
+
+		// Watch the `public` directory and refresh the
+		// browser on changes when not in production
+		!production && livereload('site'),
+
+		// If we're building for production (npm run build
+		// instead of npm run dev), minify
+		// production && terser()
+	],
+	watch: {
+		clearScreen: false
+	}
 }]
 
 function serve() {

@@ -12,15 +12,16 @@
         switched on for this page.
       </div>
     </div>
-    <script src="connect-ssb.js"></script>
-    <script>
+    <script type="module">
+      import {default as ssbConnnect, pull} from './ssb-connect.js'
+
       const outElem = document.getElementById('output')
 
       const opts = {
         limit: 100,
         reverse: true
       }
-      connectSsb().then(ssb => {
+      ssbConnnect().then(ssb => {
         outElem.innerHTML = ''
         pull(
           ssb.query.read(opts),

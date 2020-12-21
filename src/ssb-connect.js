@@ -5,6 +5,7 @@ import _pullParamap from 'pull-paramap'
 
 pull.paraMap = _pullParamap
 
+export { pull as pull }
 
 function ping() {
   window.postMessage({
@@ -30,9 +31,13 @@ function contentLoaded() {
   })
 }
 
-export default function() {
+function ssbConnect() {
   return contentLoaded().then(connectSsbNoWait)
 }
+
+export default ssbConnect
+
+export { ssbConnect as ssbConnect }
 
 function connectSsbNoWait() {
   return new Promise((resolve, reject) => {

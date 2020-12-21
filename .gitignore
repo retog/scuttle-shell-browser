@@ -8,3 +8,5 @@ webext/background.js
 webext/background.js.map
 webext/ssb-client.js
 web-ext-artifacts/
+site/ssb-connect.js
+site/ssb-connect.js.map
