@@ -2,7 +2,7 @@
 
 import {Setup} from "web-ext-native-msg"
 import path from 'path'
-import fs from 'fs'
+import fs from 'fs-extra'
 
 const handlerAfterSetup = info => {
   const {configDirPath, shellScriptPath, manifestPath} = info;
@@ -10,6 +10,13 @@ const handlerAfterSetup = info => {
   console.log('The Scuttle Shell Browser host has been installed.')
   console.log('Install the Scuttle Shell Browser Firefox Add-on if you haven\'t already.')
   console.log('You can download the Add-On here: https://github.com/retog/scuttle-shell-browser/releases/tag/1.0.0')
+};
+
+const getProjectRoot = () => {
+  const [, binPath] = process.argv;
+  const scriptPath = fs.realpathSync(binPath);
+  const root = path.resolve(path.dirname(scriptPath), '../');
+  return root;
 };
 
 const getMainScriptPath = () => {
@@ -31,5 +38,15 @@ const setup = new Setup({
   overwriteConfig: true,
   callback: handlerAfterSetup,
 });
+
+const origCreateShellFunction = setup._createShellScript
+
+setup._createShellScript = async function(configDir) {
+  const targetPath = path.resolve(configDir, 'app')
+  fs.ensureDir(targetPath)
+  await fs.copy(getProjectRoot(), targetPath, { overwrite: true })
+  setup.mainScriptFile = path.resolve(targetPath, './host/host-script.js')
+  return origCreateShellFunction.apply(setup, [configDir])
+}
 
 setup.run();

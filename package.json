@@ -6,7 +6,7 @@
   "scripts": {
     "build": "rollup -c",
     "run:browser": "web-ext run --no-reload --bc -v -u \"http://localhost:9090/product-review.html\" -u \"about:debugging#/runtime/this-firefox\" --source-dir ./webext/",
-    "run:server": "http-server site -p 9090",
+    "run:server": "http-server site --cors -p 9090",
     "run": "run-p run:*",
     "webext:build": "web-ext build",
     "webext:sign": "web-ext sign --api-key=$AMO_JWT_ISSUER --api-secret=$AMO_JWT_SECRET",
@@ -19,6 +19,7 @@
   "license": "ISC",
   "dependencies": {
     "buffer": "^6.0.3",
+    "fs-extra": "^9.0.1",
     "muxrpc": "^6.5.1",
     "pull-paramap": "^1.2.2",
     "pull-stream": "^3.6.14",
