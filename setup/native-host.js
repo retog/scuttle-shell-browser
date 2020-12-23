@@ -44,7 +44,10 @@ const origCreateShellFunction = setup._createShellScript
 setup._createShellScript = async function(configDir) {
   const targetPath = path.resolve(configDir, 'app')
   fs.ensureDir(targetPath)
-  await fs.copy(getProjectRoot(), targetPath, { overwrite: true })
+  await fs.copy(getProjectRoot(), targetPath, {
+    overwrite: true,
+    filter: (src,dest) =>  !~src.indexOf('/.git') && !~src.indexOf('/.bin')
+  })
   setup.mainScriptFile = path.resolve(targetPath, './host/host-script.js')
   return origCreateShellFunction.apply(setup, [configDir])
 }
