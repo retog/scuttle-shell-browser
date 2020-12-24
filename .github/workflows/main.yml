@@ -34,4 +34,4 @@ jobs:
         env:
           EMAIL: reto@factsmission.com
           GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          BUILD_DIR: consumer/-site
+          BUILD_DIR: consumer/site
