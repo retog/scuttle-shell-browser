@@ -23,7 +23,16 @@
         outElem.innerHTML = ''
         const opts = {
           limit: 100,
-          reverse: true
+          reverse: true,
+          query: [
+            {
+              $filter: {
+                value: {
+                  content: { type: 'patchboot-app' }
+                }
+              }
+            }
+          ]
         }
 
         function prettyPrint (msg) {
@@ -35,7 +44,7 @@
 
         pull(
           server.query.read(opts),
-          pull.filter(msg => msg.value.content.type === 'post'),
+          pull.filter(msg => msg.value.content.type === 'patchboot-app'),
           pull.collect(onDone)
         )
 

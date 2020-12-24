@@ -1,10 +1,9 @@
-import MRPC from 'muxrpc'
-import { pull } from 'pull-stream'
-import { Buffer } from 'buffer'
-import { inspect } from 'util'
-import Client from 'ssb-client'
+const MRPC = require('muxrpc')
+const { pull } = require('pull-stream')
+const { Buffer } = require('buffer')
+const Client = require('ssb-client')
 
-import {Input, Output} from 'web-ext-native-msg'
+const {Input, Output} = require('web-ext-native-msg')
 
 
 const handleReject = e => {

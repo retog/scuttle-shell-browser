@@ -1,13 +1,11 @@
 {
-  "name": "scuttle-shell-browser",
+  "name": "scuttle-shell-browser-webext",
   "version": "1.1.2",
   "description": "Web Extension that allows webpages to access Secure Scuttlebutt",
   "bin": "./setup/native-host.js",
   "scripts": {
     "build": "rollup -c",
-    "run:browser": "web-ext run --no-reload --bc -v -u \"http://localhost:9090/product-review.html\" -u \"about:debugging#/runtime/this-firefox\" --source-dir ./webext/",
-    "run:server": "http-server site --cors -p 9090",
-    "run": "run-p run:*",
+    "run:browser": "web-ext run --no-reload --bc -v -u \"https://retog.github.io/scuttle-shell-browser/product-review.html\" -u \"about:debugging#/runtime/this-firefox\" --source-dir ./webext/",
     "webext:build": "web-ext build",
     "webext:sign": "web-ext sign --api-key=$AMO_JWT_ISSUER --api-secret=$AMO_JWT_SECRET",
     "setup:native-host": "node setup/native-host.js"
@@ -19,26 +17,17 @@
   "license": "ISC",
   "dependencies": {
     "buffer": "^6.0.3",
-    "fs-extra": "^9.0.1",
     "muxrpc": "^6.5.1",
-    "pull-paramap": "^1.2.2",
-    "pull-stream": "^3.6.14",
-    "ssb-client": "^4.9.0",
-    "web-ext-native-msg": "^4.8.2"
+    "pull-stream": "^3.6.14"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^11.0.0",
-    "browserify": "^17.0.0",
-    "http-server": "^0.12.3",
     "npm-run-all": "^4.1.5",
     "rollup": "^2.34.1",
-    "rollup-plugin-css-only": "^3.0.0",
-    "rollup-plugin-livereload": "^2.0.0",
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "^1.4.0",
-    "rollup-plugin-terser": "^7.0.2",
     "web-ext": "^5.4.0"
   },
   "type": "module"

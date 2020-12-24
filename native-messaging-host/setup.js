@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import {Setup} from "web-ext-native-msg"
-import path from 'path'
-import fs from 'fs-extra'
+const {Setup} = require("web-ext-native-msg")
+const path = require('path')
+const fs = require('fs-extra')
 
 const handlerAfterSetup = info => {
   const {configDirPath, shellScriptPath, manifestPath} = info;
@@ -15,14 +15,14 @@ const handlerAfterSetup = info => {
 const getProjectRoot = () => {
   const [, binPath] = process.argv;
   const scriptPath = fs.realpathSync(binPath);
-  const root = path.resolve(path.dirname(scriptPath), '../');
+  const root = path.resolve(path.dirname(scriptPath), './');
   return root;
 };
 
 const getMainScriptPath = () => {
   const [, binPath] = process.argv;
   const scriptPath = fs.realpathSync(binPath);
-  const mainScriptPath = path.resolve(path.dirname(scriptPath), '../host/host-script.js');
+  const mainScriptPath = path.resolve(path.dirname(scriptPath), 'host-script.js');
   console.log('mainScriptPath: '+mainScriptPath)
   return mainScriptPath;
 };
@@ -48,7 +48,7 @@ setup._createShellScript = async function(configDir) {
     overwrite: true,
     filter: (src,dest) =>  !~src.indexOf('/.git') && !~src.indexOf('/.bin')
   })
-  setup.mainScriptFile = path.resolve(targetPath, './host/host-script.js')
+  setup.mainScriptFile = path.resolve(targetPath, './host-script.js')
   return origCreateShellFunction.apply(setup, [configDir])
 }
 
