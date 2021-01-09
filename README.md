@@ -11,7 +11,7 @@ Currently only Firefox is supported.
 - you need to install the native messaging host, for this run `npx scuttle-shell-browser`
 - install the extension in your browser by choosing the latest xpi in the [release section on github](https://github.com/retog/scuttle-shell-browser/releases)
 
-Once installed, youhave a context menu that allows you to give a page access to Scutttlebutt.
+Once installed, you have a context menu that allows you to give a page access to Scutttlebutt.
 
 ![Context menu to enable SSB aceess](images/scuttle-shell-browser-screenshot.png)
 
