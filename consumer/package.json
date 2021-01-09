@@ -1,5 +1,5 @@
 {
-  "name": "scuttle-shell-browser",
+  "name": "scuttle-shell-browser-consumer",
   "version": "1.1.2",
   "description": "Web Extension that allows webpages to access Secure Scuttlebutt",
   "scripts": {
