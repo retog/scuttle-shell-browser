@@ -13,7 +13,7 @@ Currently only Firefox is supported.
 
 Once installed, you have a context menu that allows you to give a page access to Scutttlebutt.
 
-![Context menu to enable SSB aceess](images/scuttle-shell-browser-screenshot.png)
+![Context menu to enable SSB access](images/scuttle-shell-browser-screenshot.png)
 
 Now you might access [https://retog.github.io/scuttle-shell-browser/](https://retog.github.io/scuttle-shell-browser/)
 for some example pages that access Scuttlebutt.

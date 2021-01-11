@@ -2,6 +2,7 @@
   "name": "scuttle-shell-browser-consumer",
   "version": "1.1.2",
   "description": "Web Extension that allows webpages to access Secure Scuttlebutt",
+  "main": "site/ssb-connect.js",
   "scripts": {
     "build": "rollup -c",
     "run:server": "http-server site --cors -p 9090"
