@@ -5032,8 +5032,7 @@
 	  ping();
 	  return new Promise((resolve, reject) => {
 	    const onMessage = (event) => {
-	      if (event.source == window &&
-	          event.data &&
+	      if (event.data &&
 	          event.data.direction == 'from-content-script') {
 	        if (event.data.action == 'ping') {
 	          window.removeEventListener('message', onMessage);
@@ -5067,10 +5066,9 @@
 
 
 	    window.addEventListener('message', (event) => {
-	      if (event.source == window &&
-	          event.data &&
-	          event.data.direction == 'from-content-script') {
-	        if (event.data.action == 'ping') ; else {
+	      if (event.data &&
+	          event.data.direction === 'from-content-script') {
+	        if (event.data.action === 'ping') ; else {
 	          const asBuffer = Buffer.from(event.data.message);
 	          if (messageDataCallback) {
 	            const _messageDataCallback = messageDataCallback;
