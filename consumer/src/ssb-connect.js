@@ -18,8 +18,7 @@ function contentLoaded() {
   ping()
   return new Promise((resolve, reject) => {
     const onMessage = (event) => {
-      if (event.source == window &&
-          event.data &&
+      if (event.data &&
           event.data.direction == 'from-content-script') {
         if (event.data.action == 'ping') {
           window.removeEventListener('message', onMessage)
@@ -57,10 +56,9 @@ function connectSsbNoWait() {
 
 
     window.addEventListener('message', (event) => {
-      if (event.source == window &&
-          event.data &&
-          event.data.direction == 'from-content-script') {
-        if (event.data.action == 'ping') {
+      if (event.data &&
+          event.data.direction === 'from-content-script') {
+        if (event.data.action === 'ping') {
           //ignored ping()
         } else {
           const asBuffer = Buffer.from(event.data.message)
