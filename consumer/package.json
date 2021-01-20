@@ -11,15 +11,18 @@
   "license": "ISC",
   "dependencies": {
     "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.0",
+    "multicb": "^1.2.2",
     "muxrpc": "^6.5.1",
     "pull-paramap": "^1.2.2",
-    "pull-stream": "^3.6.14"
+    "pull-stream": "^3.6.14",
+    "ssb-client": "^4.9.0"
   },
   "devDependencies": {
+    "@rollup/plugin-alias": "^3.1.1",
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^11.0.0",
-    "browserify": "^17.0.0",
     "http-server": "^0.12.3",
     "npm-run-all": "^4.1.5",
     "rollup": "^2.34.1",

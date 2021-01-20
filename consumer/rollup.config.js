@@ -5,6 +5,7 @@ import { terser } from 'rollup-plugin-terser';
 import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals'
 import json from '@rollup/plugin-json'
+import alias from '@rollup/plugin-alias';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -19,8 +20,14 @@ export default [{
 	},
 	plugins: [
     commonjs(),
+    alias({
+      entries: [
+        { find: 'crypto', replacement: 'crypto-browserify' }
+      ]
+    }),
     globals(),
-		builtins(),
+    json(),
+    builtins(),
 		resolve({
 			browser: true,
 			dedupe: []
@@ -51,12 +58,19 @@ export default [{
 	},
 	plugins: [
     commonjs(),
+    alias({
+      entries: [
+        { find: 'crypto', replacement: 'crypto-browserify' }
+      ]
+    }),
     globals(),
-		builtins(),
+    json(),
+    builtins(),
 		resolve({
 			browser: true,
 			dedupe: []
-		}),
+    }),
+    
 		
 
 		// In dev mode, call `npm run start` once

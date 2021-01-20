@@ -1,7 +1,9 @@
 import MRPC from 'muxrpc'
 import { pull } from 'pull-stream'
 import { Buffer } from 'buffer'
-import _pullParamap from 'pull-paramap' 
+import _pullParamap from 'pull-paramap'
+import fixAddBlob from './fix-add-blob.js'
+
 
 pull.paraMap = _pullParamap
 
@@ -90,6 +92,7 @@ function connectSsbNoWait() {
       if (err) {
         reject(err) 
       } else {
+        client.blobs.add = fixAddBlob(client.blobs.add)
         resolve(client)
       }
     })
